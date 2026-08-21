@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Piano Schedule">
+  <meta name="theme-color" content="#1a1a2e">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Piano Lesson Scheduler</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Navigation -->
+    <nav id="tab-bar">
+      <button class="tab-btn active" data-tab="calendar">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+        <span>Calendar</span>
+      </button>
+      <button class="tab-btn" data-tab="lessons">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+        <span>Lessons</span>
+      </button>
+      <button class="tab-btn" data-tab="students">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        <span>Students</span>
+      </button>
+      <button class="tab-btn" data-tab="settings">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        <span>Settings</span>
+      </button>
+    </nav>
+
+    <!-- Calendar View -->
+    <section id="calendar" class="view active">
+      <header class="view-header">
+        <h1>Calendar</h1>
+        <div class="calendar-nav">
+          <button id="prev-month" class="icon-btn">&larr;</button>
+          <span id="current-month"></span>
+          <button id="next-month" class="icon-btn">&rarr;</button>
+        </div>
+        <div class="view-toggle">
+          <button class="toggle-btn active" data-view="month">Month</button>
+          <button class="toggle-btn" data-view="week">Week</button>
+          <button class="toggle-btn" data-view="day">Day</button>
+        </div>
+      </header>
+      <div id="calendar-grid" class="calendar-month"></div>
+      <div id="day-detail" class="day-detail hidden">
+        <h3 id="day-detail-title"></h3>
+        <div id="day-lessons"></div>
+      </div>
+    </section>
+
+    <!-- Lessons View -->
+    <section id="lessons" class="view">
+      <header class="view-header">
+        <h1>Lessons</h1>
+        <button id="add-lesson-btn" class="primary-btn">+ New Lesson</button>
+      </header>
+      <div class="filter-bar">
+        <select id="filter-student">
+          <option value="">All Students</option>
+        </select>
+        <select id="filter-status">
+          <option value="">All Status</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="no-show">No Show</option>
+        </select>
+      </div>
+      <div id="lessons-list" class="lessons-list"></div>
+    </section>
+
+    <!-- Students View -->
+    <section id="students" class="view">
+      <header class="view-header">
+        <h1>Students</h1>
+        <button id="add-student-btn" class="primary-btn">+ New Student</button>
+      </header>
+      <div id="students-list" class="students-list"></div>
+    </section>
+
+    <!-- Settings View -->
+    <section id="settings" class="view">
+      <header class="view-header">
+        <h1>Settings</h1>
+      </header>
+      <div class="settings-content">
+        <div class="setting-group">
+          <h3>Teacher Info</h3>
+          <label>Name <input type="text" id="teacher-name" placeholder="Your name"></label>
+          <label>Default Lesson Duration (min)
+            <select id="default-duration">
+              <option value="30">30 min</option>
+              <option value="45">45 min</option>
+              <option value="60" selected>60 min</option>
+              <option value="90">90 min</option>
+            </select>
+          </label>
+          <label>Default Rate ($)
+            <input type="number" id="default-rate" placeholder="50" min="0" step="5">
+          </label>
+        </div>
+        <div class="setting-group">
+          <h3>Notifications</h3>
+          <div class="toggle-row">
+            <div>
+              <strong>Lesson Reminders</strong>
+              <p class="setting-desc">Get notified 5 minutes before each lesson starts. Works on iPhone, iPad, Mac, and Apple Watch.</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="notify-toggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <label>Reminder Time
+            <select id="notify-minutes">
+              <option value="5" selected>5 min before</option>
+              <option value="10">10 min before</option>
+              <option value="15">15 min before</option>
+              <option value="30">30 min before</option>
+            </select>
+          </label>
+          <p id="notify-status" class="setting-desc"></p>
+          <button id="notify-test-btn" class="secondary-btn">🔔 Send Test Notification</button>
+        </div>
+        <div class="setting-group">
+          <h3>Working Hours</h3>
+          <label>Start Time <input type="time" id="work-start" value="09:00"></label>
+          <label>End Time <input type="time" id="work-end" value="21:00"></label>
+          <label>Working Days
+            <div class="day-checkboxes">
+              <label><input type="checkbox" value="0"> Sun</label>
+              <label><input type="checkbox" value="1" checked> Mon</label>
+              <label><input type="checkbox" value="2" checked> Tue</label>
+              <label><input type="checkbox" value="3" checked> Wed</label>
+              <label><input type="checkbox" value="4" checked> Thu</label>
+              <label><input type="checkbox" value="5" checked> Fri</label>
+              <label><input type="checkbox" value="6"> Sat</label>
+            </div>
+          </label>
+        </div>
+        <div class="setting-group">
+          <h3>Data</h3>
+          <button id="export-btn" class="secondary-btn">Export Data (JSON)</button>
+          <button id="import-btn" class="secondary-btn">Import Data</button>
+          <input type="file" id="import-file" accept=".json" style="display:none">
+          <button id="clear-btn" class="danger-btn">Clear All Data</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lesson Modal -->
+    <div id="lesson-modal" class="modal hidden">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="lesson-modal-title">New Lesson</h2>
+          <button class="close-btn">&times;</button>
+        </div>
+        <form id="lesson-form">
+          <input type="hidden" id="lesson-id">
+          <label>Student
+            <select id="lesson-student" required>
+              <option value="">Select student...</option>
+            </select>
+          </label>
+          <label>Date <input type="date" id="lesson-date" required></label>
+          <label>Time <input type="time" id="lesson-time" required></label>
+          <label>Duration (min)
+            <select id="lesson-duration">
+              <option value="30">30 min</option>
+              <option value="45">45 min</option>
+              <option value="60">60 min</option>
+              <option value="90">90 min</option>
+            </select>
+          </label>
+          <label>Rate ($) <input type="number" id="lesson-rate" min="0" step="5"></label>
+          <label>Status
+            <select id="lesson-status">
+              <option value="scheduled">Scheduled</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="no-show">No Show</option>
+            </select>
+          </label>
+          <label>Recurrence
+            <select id="lesson-recurrence">
+              <option value="none">One-time</option>
+              <option value="weekly">Weekly</option>
+              <option value="biweekly">Bi-weekly</option>
+            </select>
+          </label>
+          <label>Notes <textarea id="lesson-notes" rows="3" placeholder="Repertoire, assignments, progress..."></textarea></label>
+          <div class="modal-actions">
+            <button type="button" id="delete-lesson-btn" class="danger-btn hidden">Delete</button>
+            <button type="submit" class="primary-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Student Modal -->
+    <div id="student-modal" class="modal hidden">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="student-modal-title">New Student</h2>
+          <button class="close-btn">&times;</button>
+        </div>
+        <form id="student-form">
+          <input type="hidden" id="student-id">
+          <label>Name <input type="text" id="student-name" required placeholder="Student name"></label>
+          <label>Email <input type="email" id="student-email" placeholder="email@example.com"></label>
+          <label>Phone <input type="tel" id="student-phone" placeholder="(555) 123-4567"></label>
+          <label>Level
+            <select id="student-level">
+              <option value="beginner">Beginner</option>
+              <option value="elementary">Elementary</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </label>
+          <label>Age Group
+            <select id="student-age">
+              <option value="child">Child (5-12)</option>
+              <option value="teen">Teen (13-17)</option>
+              <option value="adult">Adult (18+)</option>
+            </select>
+          </label>
+          <label>Parent/Guardian <input type="text" id="student-parent" placeholder="For minors"></label>
+          <label>Notes <textarea id="student-notes" rows="3" placeholder="Goals, preferences, special needs..."></textarea></label>
+          <div class="modal-actions">
+            <button type="button" id="delete-student-btn" class="danger-btn hidden">Delete</button>
+            <button type="submit" class="primary-btn">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
